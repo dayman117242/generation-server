@@ -1,48 +1,51 @@
-let inputString = "";
-let index = 0;
-let delay = 100;
+let inputButton;
+let inputText;
+
+let responseText;
+let outputX = 50;
+let outputY = 90;
+let y = -80
 
 function setup() {
-  createCanvas(400, 400);
-  textSize(32);
-  getTextFromAPI();
+  createCanvas(windowWidth, windowHeight);
+  rectMode(CENTER);
+
+  inputText = createInput();
+  inputText.position(50, 50);
+  
+  inputButton = createButton("Enter");
+  inputButton.position(inputText.x + inputText.width + 10, 50);
+  inputButton.mouseClicked(generateText);
 }
 
 function draw() {
-  background(255);
-  let displayString = "";
-  let words = inputString.split(" ");
-  let currentLine = "";
-  for (let i = 0; i < words.length; i++) {
-    let word = words[i];
-    if (textWidth(currentLine + word) < width - 50) {
-      currentLine += word + " ";
-    } else {
-      displayString += currentLine + "\n";
-      currentLine = word + " ";
-    }
-  }
-  displayString += currentLine;
-  let lines = displayString.split("\n");
-  let lineHeight = textAscent() + textDescent();
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i];
-    let y = (height + lineHeight) / 2 + lineHeight * i;
-    text(line, 50, y);
-  }
+  textSize(16);
+  textFont('Courier')
+  background(0);
+  push()
+  fill(95, 191, 63);
+  text("What do you do?", outputX, 30);
+  pop()
+  fill(95, 191, 63);
+  
+  text(responseText, outputX, outputY + y);
+  
 }
 
-let interval;
-async function getTextFromAPI() {
-  const response = await fetch("http://localhost:3000/generate", 
-  {method: "post", body: {text:"Little red riding hood went to the forest and "}});
+async function generateText() {
+  let input = inputText.value();
+  
+  const response = await fetch("http://localhost:3000/generate", {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      text: input
+    })
+  });
+  
   const data = await response.json();
-  inputString = data.text;
-  delay = Math.floor(Math.random() * 200) + 50;
-  interval = setInterval(function() {
-    index++;
-    if (index > inputString.length) {
-      clearInterval(interval);
-    }
-  }, delay);
+  responseText = '>  ' + `${data.text}`;
+  y += 80;
 }
