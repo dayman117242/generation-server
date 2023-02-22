@@ -8,6 +8,7 @@ let y = -80
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  background(0);
   rectMode(CENTER);
 
   inputText = createInput();
@@ -21,7 +22,7 @@ function setup() {
 function draw() {
   textSize(16);
   textFont('Courier')
-  background(0);
+  // background(0);
   push()
   fill(95, 191, 63);
   text("What do you do?", outputX, 30);
